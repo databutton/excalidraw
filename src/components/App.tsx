@@ -73,7 +73,7 @@ import {
 import { loadFromBlob } from "../data";
 import { isValidLibrary } from "../data/json";
 import Library from "../data/library";
-import { restore, restoreElements } from "../data/restore";
+import { restore, restoreElements, restoreLibraryItems } from "../data/restore";
 import {
   dragNewElement,
   dragSelectedElements,
@@ -663,10 +663,12 @@ class App extends React.Component<AppProps, AppState> {
       if (
         token === this.id ||
         window.confirm(
-          t("alerts.confirmAddLibrary", { numShapes: json.library.length }),
+          t("alerts.confirmAddLibrary", {
+            numShapes: (json.libraryItems || json.library || []).length,
+          }),
         )
       ) {
-        await this.library.importLibrary(blob);
+        await this.library.importLibrary(blob, "published");
         // hack to rerender the library items after import
         if (this.state.isLibraryOpen) {
           this.setState({ isLibraryOpen: false });
@@ -740,7 +742,10 @@ class App extends React.Component<AppProps, AppState> {
     try {
       initialData = (await this.props.initialData) || null;
       if (initialData?.libraryItems) {
-        this.libraryItemsFromStorage = initialData.libraryItems;
+        this.libraryItemsFromStorage = restoreLibraryItems(
+          initialData.libraryItems,
+          "unpublished",
+        ) as LibraryItems;
       }
     } catch (error: any) {
       console.error(error);
@@ -4447,6 +4452,8 @@ class App extends React.Component<AppProps, AppState> {
     } catch (error: any) {
       if (error.name !== "AbortError") {
         console.error(error);
+      } else {
+        console.warn(error);
       }
       this.setState(
         {
