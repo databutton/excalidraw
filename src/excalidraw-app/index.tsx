@@ -31,6 +31,7 @@ import Excalidraw, {
   defaultLang,
   languages,
 } from "../packages/excalidraw/index";
+import { randomId } from "../random";
 import {
   AppState,
   BinaryFileData,
@@ -638,6 +639,7 @@ const ExcalidrawWrapper = () => {
         initialData={initialStatePromiseRef.current.promise}
         onCollabButtonClick={collabAPI?.onCollabButtonClick}
         isCollaborating={collabAPI?.isCollaborating()}
+        generateIdForFile={() => randomId()}
         onPointerUpdate={collabAPI?.onPointerUpdate}
         UIOptions={{
           canvasActions: {

@@ -13,6 +13,7 @@ type ElementsClipboard = {
   type: typeof EXPORT_DATA_TYPES.excalidrawClipboard;
   elements: ExcalidrawElement[];
   files: BinaryFiles | undefined;
+  name: string | undefined;
 };
 
 export interface ClipboardData {
@@ -21,6 +22,7 @@ export interface ClipboardData {
   files?: BinaryFiles;
   text?: string;
   errorMessage?: string;
+  name?: string;
 }
 
 let CLIPBOARD = "";
@@ -40,7 +42,11 @@ export const probablySupportsClipboardBlob =
 
 const clipboardContainsElements = (
   contents: any,
-): contents is { elements: ExcalidrawElement[]; files?: BinaryFiles } => {
+): contents is {
+  elements: ExcalidrawElement[];
+  files?: BinaryFiles;
+  name?: string;
+} => {
   if (
     [
       EXPORT_DATA_TYPES.excalidraw,
@@ -68,6 +74,7 @@ export const copyToClipboard = async (
       }
       return acc;
     }, {} as BinaryFiles),
+    name: appState.name,
   };
   const json = JSON.stringify(contents);
   CLIPBOARD = json;
@@ -152,6 +159,7 @@ export const parseClipboard = async (
       return {
         elements: systemClipboardData.elements,
         files: systemClipboardData.files,
+        name: systemClipboardData.name,
       };
     }
     return appClipboardData;
