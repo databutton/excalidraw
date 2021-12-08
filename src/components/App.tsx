@@ -4384,7 +4384,13 @@ class App extends React.Component<AppProps, AppState> {
       );
 
       const tableFile = isNew
-        ? new File(["a,b,c\n1,2,3"], "new-table.csv", { type: "text/csv" })
+        ? new File(
+            ["first,second,third\n1,2,3\n4,5,6\n7,8,9\n10,11,12"],
+            "new-table.csv",
+            {
+              type: "text/csv",
+            },
+          )
         : await fileOpen({
             description: "Table data",
             extensions: ["csv"],
