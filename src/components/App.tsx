@@ -4366,7 +4366,13 @@ class App extends React.Component<AppProps, AppState> {
   };
 
   private onTableAction = async (
-    { insertOnCanvasDirectly } = { insertOnCanvasDirectly: false },
+    {
+      insertOnCanvasDirectly,
+      isNew,
+    }: { insertOnCanvasDirectly: boolean; isNew?: boolean } = {
+      insertOnCanvasDirectly: false,
+      isNew: false,
+    },
   ) => {
     try {
       const clientX = this.state.width / 2 + this.state.offsetLeft;
@@ -4377,10 +4383,12 @@ class App extends React.Component<AppProps, AppState> {
         this.state,
       );
 
-      const tableFile = await fileOpen({
-        description: "Table data",
-        extensions: ["csv"],
-      });
+      const tableFile = isNew
+        ? new File(["a,b,c\n1,2,3"], "new-table.csv", { type: "text/csv" })
+        : await fileOpen({
+            description: "Table data",
+            extensions: ["csv"],
+          });
 
       const tableElement = this.createTableElement({
         sceneX: x,

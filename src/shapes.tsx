@@ -1,7 +1,12 @@
+import { ExcalidrawElement } from "./element/types";
 import { KEYS } from "./keys";
 
 // We inline font-awesome icons in order to save on js size rather than including the font awesome react library
-export const SHAPES = [
+export const SHAPES: readonly {
+  icon: React.ReactElement<any, any>;
+  value: ExcalidrawElement["type"];
+  key: string | readonly string[] | null;
+}[] = [
   {
     icon: (
       // fa-mouse-pointer
