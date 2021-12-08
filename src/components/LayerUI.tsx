@@ -66,6 +66,7 @@ interface LayerUIProps {
   onTableAction: (data: {
     insertOnCanvasDirectly: boolean;
     isNew?: boolean;
+    tablename?: string;
   }) => void;
 }
 
@@ -337,10 +338,15 @@ const LayerUI = ({
                               insertOnCanvasDirectly: pointerType !== "mouse",
                             });
                           }}
-                          onTableAction={({ pointerType, isNew }) => {
+                          onTableAction={({
+                            pointerType,
+                            isNew,
+                            tablename,
+                          }) => {
                             onTableAction({
                               insertOnCanvasDirectly: pointerType !== "mouse",
                               isNew,
+                              tablename,
                             });
                           }}
                         />

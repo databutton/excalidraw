@@ -180,6 +180,7 @@ export const ShapesSwitcher = ({
   onTableAction: (data: {
     pointerType: PointerType | null;
     isNew?: boolean;
+    tablename?: string;
   }) => void;
 }) => (
   <>
@@ -214,14 +215,14 @@ export const ShapesSwitcher = ({
               setCursorForShape(canvas, value);
               onTableAction({ pointerType: "mouse" });
             }}
-            onNewTable={() => {
+            onNewTable={(tablename) => {
               setAppState({
                 elementType: value,
                 multiElement: null,
                 selectedElementIds: {},
               });
               setCursorForShape(canvas, value);
-              onTableAction({ pointerType: "mouse", isNew: true });
+              onTableAction({ pointerType: "mouse", isNew: true, tablename });
             }}
           />
         );

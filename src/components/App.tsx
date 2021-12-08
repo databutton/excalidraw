@@ -4369,7 +4369,12 @@ class App extends React.Component<AppProps, AppState> {
     {
       insertOnCanvasDirectly,
       isNew,
-    }: { insertOnCanvasDirectly: boolean; isNew?: boolean } = {
+      tablename,
+    }: {
+      insertOnCanvasDirectly: boolean;
+      isNew?: boolean;
+      tablename?: string;
+    } = {
       insertOnCanvasDirectly: false,
       isNew: false,
     },
@@ -4386,7 +4391,7 @@ class App extends React.Component<AppProps, AppState> {
       const tableFile = isNew
         ? new File(
             ["first,second,third\n1,2,3\n4,5,6\n7,8,9\n10,11,12"],
-            "new-table.csv",
+            tablename ?? "new-table.csv",
             {
               type: "text/csv",
             },

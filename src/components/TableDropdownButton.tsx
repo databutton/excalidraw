@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { usePopper } from "react-popper";
+import SetTableNameDialog from "./SetTableNameDialog";
 import "./TableDropdownButton.scss";
 import { ToolButton, ToolButtonProps } from "./ToolButton";
 
 type Props = ToolButtonProps & {
-  onNewTable: () => void;
+  onNewTable: (tablename: string) => void;
   onUploadCSV: () => void;
 };
 const TableDropdownButton: React.FC<Props> = ({
@@ -22,6 +23,9 @@ const TableDropdownButton: React.FC<Props> = ({
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
   );
+
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
+
   useEffect(() => {
     const onClick = (e: any) => {
       if (
@@ -73,8 +77,8 @@ const TableDropdownButton: React.FC<Props> = ({
           className="item"
           onClick={(e) => {
             e.preventDefault();
-            onNewTable();
             setDropdownVisible(false);
+            setConfirmDialogOpen(true);
           }}
         >
           New table
@@ -104,6 +108,17 @@ const TableDropdownButton: React.FC<Props> = ({
         data-testid={rest["data-testid"]}
       />
       {dropdownVisible && dropdown}
+      {confirmDialogOpen && (
+        <SetTableNameDialog
+          onConfirm={(tablename) => {
+            setConfirmDialogOpen(false);
+            onNewTable(tablename);
+          }}
+          onCancel={() => {
+            setConfirmDialogOpen(false);
+          }}
+        />
+      )}
     </>
   );
 };
