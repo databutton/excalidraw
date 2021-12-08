@@ -22,7 +22,6 @@ const TableDropdownButton: React.FC<Props> = ({
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
   );
-  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
   useEffect(() => {
     const onClick = (e: any) => {
       if (
@@ -40,7 +39,6 @@ const TableDropdownButton: React.FC<Props> = ({
   }, [referenceElement, popperElement, setDropdownVisible]);
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     modifiers: [
-      { name: "arrow", options: { element: arrowElement } },
       {
         name: "offset",
         enabled: true,
@@ -82,13 +80,6 @@ const TableDropdownButton: React.FC<Props> = ({
           New table
         </div>
       </div>
-      {/* <Island padding={1} style={{ minWidth: "200px" }}>
-        <Stack.Row gap={1}>
-          <Stack.Col style={{ width: "100%" }}>Upload CSV</Stack.Col>
-        </Stack.Row>
-        <Stack.Row gap={1}>New table</Stack.Row>
-      </Island> */}
-      <div ref={setArrowElement} style={styles.arrow} />
     </div>
   );
   return (
@@ -111,20 +102,6 @@ const TableDropdownButton: React.FC<Props> = ({
         aria-label={rest["aria-label"]}
         aria-keyshortcuts={rest["aria-keyshortcuts"]}
         data-testid={rest["data-testid"]}
-        // onChange={({ pointerType }) => {
-        //   setAppState({
-        //     elementType: value,
-        //     multiElement: null,
-        //     selectedElementIds: {},
-        //   });
-        //   setCursorForShape(canvas, value);
-        //   if (value === "image") {
-        //     onImageAction({ pointerType });
-        //   }
-        //   if (value === "table") {
-        //     onTableAction({ pointerType });
-        //   }
-        // }}
       />
       {dropdownVisible && dropdown}
     </>
