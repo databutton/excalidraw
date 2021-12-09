@@ -31,6 +31,7 @@ import Excalidraw, {
   defaultLang,
   languages,
 } from "../packages/excalidraw/index";
+import { generateThumbnail } from "../shapes";
 import {
   AppState,
   BinaryFileData,
@@ -670,6 +671,7 @@ const ExcalidrawWrapper = () => {
         handleKeyboardGlobally={true}
         onLibraryChange={onLibraryChange}
         autoFocus={true}
+        generateThumbnailForTable={generateThumbnail}
       />
       {excalidrawAPI && (
         <CollabWrapper

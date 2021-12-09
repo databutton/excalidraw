@@ -157,6 +157,8 @@ export type AppState = {
   pendingImageElement: NonDeleted<
     ExcalidrawImageElement | ExcalidrawTableElement
   > | null;
+  showRenameTableDialog: boolean;
+  pendingNewTablename?: string | null;
 };
 
 export type NormalizedZoomValue = number & { _brand: "normalizedZoom" };

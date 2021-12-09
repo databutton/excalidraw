@@ -1,9 +1,9 @@
+import clsx from "clsx";
+import throttle from "lodash.throttle";
+import { nanoid } from "nanoid";
 import React, { useContext } from "react";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import rough from "roughjs/bin/rough";
-import clsx from "clsx";
-import { nanoid } from "nanoid";
-
 import {
   actionAddToLibrary,
   actionBringForward,
@@ -24,12 +24,14 @@ import {
   actionSendBackward,
   actionSendToBack,
   actionToggleGridMode,
+  actionToggleRenameTableDialog,
   actionToggleStats,
   actionToggleZenMode,
   actionUngroup,
   zoomToFitElements,
 } from "../actions";
 import { createRedoAction, createUndoAction } from "../actions/actionHistory";
+import { actionToggleViewMode } from "../actions/actionToggleViewMode";
 import { ActionManager } from "../actions/manager";
 import { actions } from "../actions/register";
 import { ActionResult } from "../actions/types";
@@ -72,6 +74,15 @@ import {
   ZOOM_STEP,
 } from "../constants";
 import { loadFromBlob } from "../data";
+import {
+  dataURLToFile,
+  generateIdFromFile,
+  getDataURL,
+  isSupportedImageFile,
+  resizeImageFile,
+  SVGStringToFile,
+} from "../data/blob";
+import { fileOpen, nativeFileSystemSupported } from "../data/filesystem";
 import { isValidLibrary } from "../data/json";
 import Library from "../data/library";
 import { restore, restoreElements, restoreLibraryItems } from "../data/restore";
@@ -94,9 +105,9 @@ import {
   isNonDeletedElement,
   isTextElement,
   newElement,
+  newImageElement,
   newLinearElement,
   newTextElement,
-  newImageElement,
   textWysiwyg,
   transformElements,
   updateTextElement,
@@ -114,6 +125,12 @@ import {
   unbindLinearElements,
   updateBoundElements,
 } from "../element/binding";
+import {
+  getInitializedImageElements,
+  loadHTMLImageElement,
+  normalizeSVG,
+  updateImageCache as _updateImageCache,
+} from "../element/image";
 import { LinearElementEditor } from "../element/linearElementEditor";
 import {
   bumpVersion,
@@ -138,14 +155,14 @@ import {
   ExcalidrawElement,
   ExcalidrawFreeDrawElement,
   ExcalidrawGenericElement,
-  ExcalidrawLinearElement,
-  ExcalidrawTextElement,
-  NonDeleted,
-  InitializedExcalidrawImageElement,
   ExcalidrawImageElement,
-  FileId,
+  ExcalidrawLinearElement,
   ExcalidrawTableElement,
+  ExcalidrawTextElement,
+  FileId,
+  InitializedExcalidrawImageElement,
   InitializedExcalidrawTableElement,
+  NonDeleted,
 } from "../element/types";
 import { getCenter, getDistance } from "../gesture";
 import {
@@ -161,11 +178,11 @@ import History from "../history";
 import { defaultLang, getLanguage, languages, setLanguage, t } from "../i18n";
 import {
   CODES,
-  shouldResizeFromCenter,
-  shouldMaintainAspectRatio,
-  shouldRotateWithDiscreteAngle,
   isArrowKey,
   KEYS,
+  shouldMaintainAspectRatio,
+  shouldResizeFromCenter,
+  shouldRotateWithDiscreteAngle,
 } from "../keys";
 import { distance2d, getGridPoint, isPathALoop } from "../math";
 import { renderScene } from "../renderer";
@@ -190,9 +207,9 @@ import {
   AppProps,
   AppState,
   BinaryFileData,
+  BinaryFiles,
   DataURL,
   ExcalidrawImperativeAPI,
-  BinaryFiles,
   Gesture,
   GestureEvent,
   LibraryItems,
@@ -219,23 +236,6 @@ import ContextMenu, { ContextMenuOption } from "./ContextMenu";
 import LayerUI from "./LayerUI";
 import { Stats } from "./Stats";
 import { Toast } from "./Toast";
-import { actionToggleViewMode } from "../actions/actionToggleViewMode";
-import {
-  dataURLToFile,
-  generateIdFromFile,
-  getDataURL,
-  isSupportedImageFile,
-  resizeImageFile,
-  SVGStringToFile,
-} from "../data/blob";
-import {
-  getInitializedImageElements,
-  loadHTMLImageElement,
-  normalizeSVG,
-  updateImageCache as _updateImageCache,
-} from "../element/image";
-import throttle from "lodash.throttle";
-import { fileOpen, nativeFileSystemSupported } from "../data/filesystem";
 
 const IsMobileContext = React.createContext(false);
 export const useIsMobile = () => useContext(IsMobileContext);
@@ -505,6 +505,8 @@ class App extends React.Component<AppProps, AppState> {
                 renderCustomStats={renderCustomStats}
               />
             )}
+            {this.state.showRenameTableDialog &&
+              this.actionManager.renderAction("renameTable")}
             {this.state.toastMessage !== null && (
               <Toast
                 message={this.state.toastMessage}
@@ -556,9 +558,15 @@ class App extends React.Component<AppProps, AppState> {
       }
 
       if (actionResult.files) {
+        // Force an image cache refresh for the new files
+        Object.values(actionResult.files).forEach((f) => {
+          this.imageCache.delete(f.id);
+        });
+
         this.files = actionResult.replaceFiles
           ? actionResult.files
           : { ...this.files, ...actionResult.files };
+
         this.addNewImagesToImageCache();
       }
 
@@ -5029,6 +5037,12 @@ class App extends React.Component<AppProps, AppState> {
       this.actionManager.getAppState(),
     );
 
+    const maybeRenameTable =
+      actionToggleRenameTableDialog.contextItemPredicate!(
+        this.actionManager.getElementsIncludingDeleted(),
+        this.actionManager.getAppState(),
+      );
+
     const separator = "separator";
 
     const elements = this.scene.getElements();
@@ -5130,6 +5144,7 @@ class App extends React.Component<AppProps, AppState> {
               },
             this.isMobile && separator,
             ...options,
+            maybeRenameTable && actionToggleRenameTableDialog,
             separator,
             actionCopyStyles,
             actionPasteStyles,
