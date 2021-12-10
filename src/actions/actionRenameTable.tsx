@@ -1,7 +1,8 @@
 import SetTableNameDialog from "../components/SetTableNameDialog";
-import { getNonDeletedElements } from "../element";
-import { ExcalidrawTableElement } from "../element/types";
+import { duplicateElement, getNonDeletedElements } from "../element";
+import { ExcalidrawTableElement, FileId } from "../element/types";
 import { t } from "../i18n";
+import { randomId } from "../random";
 import { getSelectedElements } from "../scene";
 import { BinaryFileData } from "../types";
 import { register } from "./register";
@@ -54,13 +55,21 @@ export const actionRenameTable = register({
     if (!generator) {
       return false;
     }
-    const newExtraFile = {
-      ...existingFile.extraFile,
-      name: data.title,
-    } as File;
+    // Dummy file with new name
+    const newExtraFile = new File([], data.title!);
     const newDataUrl = await generator(newExtraFile);
+    const fileId: FileId = (
+      app.props.generateIdForFile
+        ? await app.props.generateIdForFile(newExtraFile)
+        : randomId()
+    ) as FileId;
+    const newElement = duplicateElement(null, new Map(), element, {
+      fileId,
+      tableId: element.tableId || element.fileId,
+    });
     const newFile = {
       ...existingFile,
+      id: fileId,
       extraFile: newExtraFile,
       dataURL: newDataUrl,
     } as BinaryFileData;
@@ -71,8 +80,9 @@ export const actionRenameTable = register({
         pendingNewTablename: null,
         showRenameTableDialog: false,
       },
+      elements: [...elements.filter((e) => e.id !== element.id), newElement],
       commitToHistory: true,
-      files: { [element.fileId!]: newFile },
+      files: { ...app.files, [newElement.fileId as string]: newFile },
     };
   },
   PanelComponent: ({ updateData, data }) => {
