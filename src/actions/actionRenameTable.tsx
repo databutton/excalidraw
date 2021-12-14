@@ -9,11 +9,26 @@ import { register } from "./register";
 
 export const actionToggleRenameTableDialog = register({
   name: "toggleRenameTableDialog",
-  perform(elements, appState) {
+  perform(elements, appState, _, app) {
+    const selected = getSelectedElements(
+      getNonDeletedElements(elements),
+      appState,
+    ) as ExcalidrawTableElement[];
+    if (selected.length !== 1) {
+      return false;
+    }
+    const currentExtraFile = Object.values(app.files).find(
+      (f) => f.id === selected[0].fileId,
+    )?.extraFile;
+    let existingTitle: string | undefined = undefined;
+    if (currentExtraFile) {
+      existingTitle = currentExtraFile.name;
+    }
     return {
       appState: {
         ...appState,
         showRenameTableDialog: !this.checked!(appState),
+        pendingNewTablename: existingTitle,
       },
       commitToHistory: false,
     };
@@ -85,9 +100,10 @@ export const actionRenameTable = register({
       files: { ...app.files, [newElement.fileId as string]: newFile },
     };
   },
-  PanelComponent: ({ updateData, data }) => {
+  PanelComponent: ({ updateData, data, appState }) => {
     return (
       <SetTableNameDialog
+        initialValue={appState.pendingNewTablename as string | undefined}
         onCancel={() => updateData({ close: true })}
         onConfirm={(title) => {
           updateData({ title });

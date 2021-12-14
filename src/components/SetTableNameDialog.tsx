@@ -8,10 +8,13 @@ interface Props
   onCancel: () => void;
   confirmText?: string;
   cancelText?: string;
+  initialValue?: string;
 }
 
 const SetTableNameDialog: React.FC<Props> = (props) => {
-  const [tablename, setTablename] = useState<string>("new-table.csv");
+  const [tablename, setTablename] = useState<string>(
+    props.initialValue ?? "new-table.csv",
+  );
   const [errorMessage, setErrorMessage] = useState<string>();
   return (
     <ConfirmDialog

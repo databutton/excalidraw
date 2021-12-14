@@ -4121,6 +4121,7 @@ class App extends React.Component<AppProps, AppState> {
             [fileId]: {
               mimeType,
               id: fileId,
+              tableId,
               dataURL,
               created: Date.now(),
               fileMimeType: tableFile.type,

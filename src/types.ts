@@ -63,6 +63,7 @@ export type BinaryFileData = {
   // FileID refers to the real file which has a fileType and an extraFile
   fileMimeType?: string;
   extraFile?: File;
+  tableId?: string;
 };
 
 export type BinaryFileMetadata = Omit<BinaryFileData, "dataURL">;
