@@ -1,5 +1,6 @@
 import SetTableNameDialog from "../components/SetTableNameDialog";
 import { duplicateElement, getNonDeletedElements } from "../element";
+import { bumpVersion } from "../element/mutateElement";
 import { ExcalidrawTableElement, FileId } from "../element/types";
 import { t } from "../i18n";
 import { randomId } from "../random";
@@ -81,7 +82,9 @@ export const actionRenameTable = register({
     const newElement = duplicateElement(null, new Map(), element, {
       fileId,
       tableId: element.tableId || element.fileId,
+      status: "pending",
     });
+    bumpVersion(newElement);
     const newFile = {
       ...existingFile,
       id: fileId,
