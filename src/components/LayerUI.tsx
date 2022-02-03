@@ -36,6 +36,7 @@ import { LibraryMenu } from "./LibraryMenu";
 
 import "./LayerUI.scss";
 import "./Toolbar.scss";
+import { PenModeButton } from "./PenModeButton";
 
 interface LayerUIProps {
   actionManager: ActionManager;
@@ -46,6 +47,7 @@ interface LayerUIProps {
   elements: readonly NonDeletedExcalidrawElement[];
   onCollabButtonClick?: () => void;
   onLockToggle: () => void;
+  onPenModeToggle: () => void;
   onInsertElements: (elements: readonly NonDeletedExcalidrawElement[]) => void;
   zenModeEnabled: boolean;
   showExitZenModeBtn: boolean;
@@ -81,6 +83,7 @@ const LayerUI = ({
   elements,
   onCollabButtonClick,
   onLockToggle,
+  onPenModeToggle,
   onInsertElements,
   zenModeEnabled,
   showExitZenModeBtn,
@@ -319,6 +322,13 @@ const LayerUI = ({
                       "zen-mode": zenModeEnabled,
                     })}
                   >
+                    <PenModeButton
+                      zenModeEnabled={zenModeEnabled}
+                      checked={appState.penMode}
+                      onChange={onPenModeToggle}
+                      title={t("toolBar.penMode")}
+                      penDetected={appState.penDetected}
+                    />
                     <LockButton
                       zenModeEnabled={zenModeEnabled}
                       checked={appState.elementLocked}
@@ -515,6 +525,7 @@ const LayerUI = ({
         setAppState={setAppState}
         onCollabButtonClick={onCollabButtonClick}
         onLockToggle={onLockToggle}
+        onPenModeToggle={onPenModeToggle}
         canvas={canvas}
         isCollaborating={isCollaborating}
         renderCustomFooter={renderCustomFooter}

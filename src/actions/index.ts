@@ -86,3 +86,4 @@ export {
   actionToggleRenameTableDialog,
 } from "./actionRenameTable";
 export { actionUnbindText } from "./actionUnbindText";
+export { actionLink } from "../element/Hyperlink";

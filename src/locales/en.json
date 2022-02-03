@@ -106,7 +106,12 @@
     "renameTable": "Rename table",
     "decreaseFontSize": "Decrease font size",
     "increaseFontSize": "Increase font size",
-    "unbindText": "Unbind text"
+    "unbindText": "Unbind text",
+    "link": {
+      "edit": "Edit link",
+      "create": "Create link",
+      "label": "Link"
+    }
   },
   "buttons": {
     "clearReset": "Reset the canvas",
@@ -189,7 +194,9 @@
     "text": "Text",
     "library": "Library",
     "table": "Insert table",
-    "lock": "Keep selected tool active after drawing"
+    "lock": "Keep selected tool active after drawing",
+    "penMode": "Prevent pinch-zoom and accept freedraw input only from pen",
+    "link": "Add/ Update link for a selected shape"
   },
   "headings": {
     "canvasActions": "Canvas actions",

@@ -106,7 +106,8 @@ export type ActionName =
   | "toggleRenameTableDialog"
   | "increaseFontSize"
   | "decreaseFontSize"
-  | "unbindText";
+  | "unbindText"
+  | "link";
 
 export type PanelComponentProps = {
   elements: readonly ExcalidrawElement[];
