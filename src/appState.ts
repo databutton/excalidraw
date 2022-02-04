@@ -43,6 +43,8 @@ export const getDefaultAppState = (): Omit<
     editingLinearElement: null,
     elementLocked: false,
     elementType: "selection",
+    penMode: false,
+    penDetected: false,
     errorMessage: null,
     exportBackground: true,
     exportScale: defaultExportScale,
@@ -84,6 +86,7 @@ export const getDefaultAppState = (): Omit<
     pendingImageElement: null,
     showRenameTableDialog: false,
     pendingNewTablename: null,
+    showHyperlinkPopup: false,
   };
 };
 
@@ -131,6 +134,8 @@ const APP_STATE_STORAGE_CONF = (<
   editingLinearElement: { browser: false, export: false, server: false },
   elementLocked: { browser: true, export: false, server: false },
   elementType: { browser: true, export: false, server: false },
+  penMode: { browser: false, export: false, server: false },
+  penDetected: { browser: false, export: false, server: false },
   errorMessage: { browser: false, export: false, server: false },
   exportBackground: { browser: true, export: false, server: false },
   exportEmbedScene: { browser: true, export: false, server: false },
@@ -174,6 +179,7 @@ const APP_STATE_STORAGE_CONF = (<
   pendingImageElement: { browser: false, export: false, server: false },
   showRenameTableDialog: { browser: false, export: false, server: false },
   pendingNewTablename: { browser: false, export: false, server: false },
+  showHyperlinkPopup: { browser: false, export: false, server: false },
 });
 
 const _clearAppStateForStorage = <

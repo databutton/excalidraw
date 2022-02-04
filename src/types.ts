@@ -86,6 +86,8 @@ export type AppState = {
   editingLinearElement: LinearElementEditor | null;
   elementType: typeof SHAPES[number]["value"];
   elementLocked: boolean;
+  penMode: boolean;
+  penDetected: boolean;
   exportBackground: boolean;
   exportEmbedScene: boolean;
   exportWithDarkMode: boolean;
@@ -160,6 +162,7 @@ export type AppState = {
   > | null;
   showRenameTableDialog: boolean;
   pendingNewTablename?: string | null;
+  showHyperlinkPopup: false | "info" | "editor";
 };
 
 export type NormalizedZoomValue = number & { _brand: "normalizedZoom" };
