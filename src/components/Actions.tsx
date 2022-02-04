@@ -12,6 +12,7 @@ import {
   hasStrokeStyle,
   hasStrokeWidth,
   hasText,
+  canUpdateFromCode,
 } from "../scene";
 import { hasStrokeColor } from "../scene/comparisons";
 import { SHAPES } from "../shapes";
@@ -165,6 +166,9 @@ export const SelectedShapeActions = ({
           </div>
         </fieldset>
       )}
+      {targetElements.length === 1 &&
+        canUpdateFromCode(targetElements[0].type) &&
+        renderAction("updateFromCode")}
     </div>
   );
 };

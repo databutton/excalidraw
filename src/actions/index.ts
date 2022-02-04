@@ -87,3 +87,4 @@ export {
 } from "./actionRenameTable";
 export { actionUnbindText } from "./actionUnbindText";
 export { actionLink } from "../element/Hyperlink";
+export { actionUpdateFromCode } from "./actionUpdateFromCode";
