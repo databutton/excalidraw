@@ -22,13 +22,18 @@ export const actionUpdateFromCode = register({
   contextItemLabel: "labels.updateFromCode",
   PanelComponent: ({ elements, appState, updateData }) => {
     const selectedElement = getSelectedElements(elements, appState)[0];
+    if (!selectedElement) {
+      return <></>;
+    }
 
     return (
       <fieldset>
         <legend>Interact through code</legend>
         <div>
           <div>
-            <code>
+            <code
+              style={{ color: "var(--text-primary-color", fontSize: "0.8rem" }}
+            >
               <span>id: </span>
               <span style={{ userSelect: "text" }}>{selectedElement.id}</span>
             </code>
